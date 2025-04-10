@@ -6,6 +6,8 @@ using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 if (builder.Environment.IsDevelopment())
 {
     builder.UseOrleans(siloBuilder =>
@@ -74,6 +76,8 @@ if (!string.IsNullOrEmpty(appInsightsConnectionString))
 builder.Services.AddHostedService<ProductStoreSeeder>();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 if (builder.Environment.IsDevelopment())
 {
