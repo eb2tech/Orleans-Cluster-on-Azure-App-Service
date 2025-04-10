@@ -11,20 +11,20 @@ public partial class MainLayout
     
     readonly MudTheme _theme = new()
     {
-        Palette = new Palette()
+        PaletteLight = new PaletteLight()
         {
             Tertiary = "#7e6fff",
             DrawerIcon = "#aaa9b9",
             DrawerText = "#aaa9b9",
             DrawerBackground = "#303030"
         },
-        PaletteDark = new Palette()
+        PaletteDark = new PaletteDark()
         {
             Primary = "#7e6fff",
             Tertiary = "#7e6fff",
             Surface = "#1e1e2d",
             Background = "#1a1a27",
-            BackgroundGrey = "#151521",
+            BackgroundGray = "#151521",
             AppbarText = "#92929f",
             AppbarBackground = "rgba(26,26,39,0.8)",
             DrawerBackground = "#1a1a27",
@@ -64,20 +64,17 @@ public partial class MainLayout
         {
             ToastService.OnToastedRequested += OnToastRequested;
 
-            if (await LocalStorage.GetItemAsync(PrefersDarkThemeKey)
-                is { Length: > 0 } isDarkTheme &&
-                bool.TryParse(isDarkTheme, out var parsedValue))
-            {
-                _isDarkTheme = parsedValue;
-            }
+            _isDarkTheme = await LocalStorage.GetItemAsync<bool>(PrefersDarkThemeKey);
 
             await base.OnAfterRenderAsync(firstRender);
         }
     }
 
-    async Task OnToggledChangedAsync(bool value) =>
-        await LocalStorage.SetItemAsync(
-            PrefersDarkThemeKey, (_isDarkTheme = value).ToString());
+    async Task OnToggledChangedAsync(bool value)
+    {
+        _isDarkTheme = value;
+        await LocalStorage.SetItemAsync(PrefersDarkThemeKey, value);
+    }
 
     Task OnToastRequested((string Title, string Message) tuple) =>
         InvokeAsync(() =>
